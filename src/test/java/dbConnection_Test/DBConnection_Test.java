@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 
 public class DBConnection_Test {
 
@@ -36,10 +35,10 @@ public class DBConnection_Test {
     public void testInsertQuery() throws SQLException {
         Connection connection = instance.getConnection();
 
-        String insertQuery = "INSERT INTO role(userRoleID, userRole) VALUES(?, ?)";
+        String insertQuery = "INSERT INTO genre(genreID, genreName) VALUES(?, ?)";
         PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
-        insertStatement.setString( 1,"4");
-        insertStatement.setString( 2,"Test");
+        insertStatement.setString( 1,"37");
+        insertStatement.setString( 2,"Comedy");
         int rowsInserted = insertStatement.executeUpdate();
         System.out.println(rowsInserted + " row(s) inserted.");
     }
