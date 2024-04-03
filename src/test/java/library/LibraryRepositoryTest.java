@@ -1,6 +1,5 @@
 package library;
 
-import buildingBlocks.library.LibraryRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

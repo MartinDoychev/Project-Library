@@ -1,7 +1,5 @@
 package book;
 
-import buildingBlocks.book.Book;
-import buildingBlocks.book.BookRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
