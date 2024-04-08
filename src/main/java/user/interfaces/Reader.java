@@ -11,7 +11,7 @@ public interface Reader {
 
     ArrayList<Book> searchBookByAuthor(String authorName);
 
-    boolean addToLibrary(Book book);
+    boolean addToLibrary(String bookName);
 
     void sortLibraryByAuthor(Library library);
 

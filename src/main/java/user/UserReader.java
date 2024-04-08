@@ -5,20 +5,25 @@ import book.IBookRepository;
 import library.Library;
 import enums.BookAccess;
 import user.interfaces.Reader;
+import user.repository.IUserRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class UserReader extends User implements Reader {
 
-    private Library library;
+
+    private final IUserRepository userRepository;
     private final IBookRepository bookRepository;
+    private Library library;
 
-    public UserReader(IBookRepository bookRepository) throws SQLException {
+
+    public UserReader(int userID, IUserRepository userRepository, IBookRepository bookRepository) throws SQLException {
+        super(userID);
+        this.userRepository = userRepository;
         this.bookRepository = bookRepository;
-        this.library = new Library();
+        this.library = userRepository.getUserLibrary(userID);
     }
-
 
     @Override
     public ArrayList<Book> searchBookByName(String bookName) throws SQLException {
@@ -51,8 +56,18 @@ public class UserReader extends User implements Reader {
     }
 
     @Override
-    public boolean addToLibrary(Book book) {
-        return false;
+    public boolean addToLibrary(String bookName) {
+        boolean result = false;
+        if (bookRepository.bookExistsInGeneralLibrary(bookName)) {
+            ArrayList<Book> books = bookRepository.searchBookByName(bookName);
+            for (Book book: books) {
+                if (book.getAccess() == BookAccess.AVAILABLE) {
+                    this.library.addBookToLibrary(book.getTitle());
+                    result = true;
+                }
+            }
+        }
+        return result;
     }
 
     @Override
