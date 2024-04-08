@@ -7,7 +7,7 @@ public class User {
     private Address address;
     private long phoneNumber;
     private Role role;
-    private IUserRepository userRepository;
+//    private IUserRepository userRepository;
     public enum Role {
         READER,
         AUTHOR,
@@ -16,10 +16,10 @@ public class User {
 
     //голяма тройка - default, with parameters and copy constr
     public User() {
-        this("", "", "", new Address(), 0, 0, Role.READER);
+        this("", "", "", new Address(), 0,"", Role.READER);
     }
 
-    public User(String fn, String ln, String mail, Address address1, long pn, String password, Role role,) {
+    public User(String fn, String ln, String mail, Address address1, long pn, String password, Role role) {
         this.firstName = fn;
         this.lastName = ln;
         this.email = mail;
@@ -176,20 +176,20 @@ public class User {
                 break;
         }
         User user = new User(name, famName,mail,address, num,pass,role);
-        insertUser(user);
+        //insertUser(user);
         return user;
     }
 
-    public boolean insertUser(User user){
-        if(user.existsInDB()){
-            return false;
-        }
-        else{
-            user.insertIntoUser();
-            user.insertIntoCredentials();
-            return true;
-        }
-    }
+//    public boolean insertUser(User user){
+//        if(user.existsInDB()){
+//            return false;
+//        }
+//        else{
+//            user.insertIntoUser();
+//            user.insertIntoCredentials();
+//            return true;
+//        }
+//    }
     public void printUserData() {
         System.out.println("User Information:");
         System.out.println("First Name: " + firstName);
