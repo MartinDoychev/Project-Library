@@ -2,26 +2,30 @@ package user;
 
 import book.Book;
 import book.IBookRepository;
+import enums.Role;
 import library.Library;
 import enums.BookAccess;
 import user.interfaces.Reader;
+import user.repository.IUserRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class UserReader extends User implements Reader {
-
-    private Library library;
+//    private final IUserRepository userRepository;
     private final IBookRepository bookRepository;
+    private Library library;
 
-    public UserReader(IBookRepository bookRepository) throws SQLException {
+
+    public UserReader(int userID, IUserRepository userRepository, IBookRepository bookRepository) throws SQLException {
+        super(userID, Role.READER, userRepository);
+//        this.userRepository = userRepository;
         this.bookRepository = bookRepository;
-        this.library = new Library();
+        this.library = userRepository.getUserLibrary(userID);
     }
 
-
     @Override
-    public ArrayList<Book> searchBookByName(String bookName) throws SQLException {
+    public ArrayList<Book> searchBookByName(String bookName) {
         ArrayList<Book> books = new ArrayList<>();
         ArrayList<Book> collectedBooks = bookRepository.searchBookByName(bookName);
 
@@ -51,32 +55,69 @@ public class UserReader extends User implements Reader {
     }
 
     @Override
-    public boolean addToLibrary(Book book) {
-        return false;
+    public boolean addToLibrary(String bookName) {
+        boolean result = false;
+        if (bookRepository.bookExistsInGeneralLibrary(bookName)) {
+            ArrayList<Book> books = bookRepository.searchBookByName(bookName);
+            for (Book book : books) {
+                if (book.getAccess() == BookAccess.AVAILABLE) {
+                    this.library.addBookToLibrary(book.getTitle());
+                    result = true;
+                }
+            }
+        }
+        return result;
+    }
+
+
+    @Override
+    public void sortLibraryByAuthor() {
+        int userID = super.getUserID();
+        ArrayList<Book> books = super.getUserRepository().getUserLibraryListSortedBy(userID, "AuthorName");
+        for (Book book : books) {
+            System.out.println(book.toString());
+        }
     }
 
     @Override
-    public void sortLibraryByAuthor(Library library) {
-
+    public void sortLibraryByGenre() {
+        int userID = super.getUserID();
+        ArrayList<Book> books = super.getUserRepository().getUserLibraryListSortedBy(userID, "g.genreName");
+        for (Book book : books) {
+            System.out.println(book.toString());
+        }
     }
 
     @Override
-    public void sortLibraryByName(Library library) {
-
+    public void sortLibraryByTitle() {
+        int userID = super.getUserID();
+        ArrayList<Book> books = super.getUserRepository().getUserLibraryListSortedBy(userID, "b.Title");
+        for (Book book : books) {
+            System.out.println(book.toString());
+        }
     }
 
-    @Override
-    public void sortLibraryByGenre(Library library) {
-
-    }
 
     @Override
-    public void rateBook(String title) {
-
+    public void rateBook(int bookID, double rating) {
+        try {
+            Book book = bookRepository.getBookByID(bookID);
+            if (book.getAccess() == BookAccess.AVAILABLE) {
+                bookRepository.rateBook(bookID, rating);
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
     }
 
     @Override
     public void showLastRead() {
-
+        int userID = super.getUserID();
+        ArrayList<Book> books = super.getUserRepository().getUserLibraryListSortedBy(userID, "bl.DateRead DESC LIMIT 5");
+        for (Book book : books) {
+            if (book.getIsRead()) {
+                System.out.println(book.toString());
+            }
+        }
     }
 }
