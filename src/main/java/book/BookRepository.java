@@ -56,6 +56,39 @@ public class BookRepository implements IBookRepository {
     }
 
     @Override
+    public Book getBookByID(int bookID) throws SQLException {
+        String title = "";
+        String author = "";
+        String ISBN = "";
+        String genre = "";
+        String language = "";
+        double rating = 0.0;
+        BookAccess access = BookAccess.AVAILABLE;
+
+        try {
+            String selectQuery = "SELECT * FROM book where BookID like ?";
+            PreparedStatement selectStatement = this.connection.prepareStatement(selectQuery);
+            selectStatement.setString(1, String.valueOf(bookID));
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            while (resultSet.next()) {
+                bookID = resultSet.getInt("BookID");
+                title = resultSet.getString("Title");
+                author = getAuthor(resultSet.getInt("AuthorID"));
+                ISBN = resultSet.getString("ISBN");
+                genre = getGenre(resultSet.getInt("GenreID"));
+                language = getLanguage(resultSet.getInt("LanguageID"));
+                rating = resultSet.getDouble("rating");
+                access = getBookAccess(resultSet.getInt("AccessID"));
+            }
+
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return new Book(bookID, title, author, ISBN, genre, language, rating, access, false);
+    }
+
+    @Override
     public ArrayList<Book> searchBookByAuthor(String authorName) {
         ArrayList<Book> result = new ArrayList<>();
         int bookID;
@@ -95,6 +128,19 @@ public class BookRepository implements IBookRepository {
     }
 
     private BookAccess getBookAccess(int access) {
+        BookAccess bookAccess = BookAccess.AVAILABLE;
+        switch (access) {
+            case 2:
+                bookAccess = BookAccess.STAGED;
+                break;
+            case 3:
+                bookAccess = BookAccess.ANNOUNCED;
+                break;
+        }
+        return bookAccess;
+    }
+
+    public static BookAccess getTheBookAccess(int access) {
         BookAccess bookAccess = BookAccess.AVAILABLE;
         switch (access) {
             case 2:
@@ -347,6 +393,32 @@ public class BookRepository implements IBookRepository {
         }
 
         return bookAccess;
+    }
+
+    @Override
+    public void rateBook(int bookID, double newRating) throws SQLException {
+        Book book = getBookByID(bookID);
+        double rating = book.getRating();
+
+        if (rating == 0) {
+            rating = newRating;
+        } else {
+            rating = (rating + newRating) / 2;
+        }
+
+        setRatingByBookID(bookID, rating);
+    }
+
+    private void setRatingByBookID(int bookID, double rating) {
+        try {
+            String updateQuery = "UPDATE book SET rating = ? WHERE BookID = ?";
+            PreparedStatement updateStatement = this.connection.prepareStatement(updateQuery);
+            updateStatement.setString(1, String.valueOf(rating));
+            updateStatement.setString(2, String.valueOf(bookID));
+            int rowsUpdated = updateStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
     }
 
 }

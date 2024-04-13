@@ -20,11 +20,11 @@ public class UserReaderTest {
     public void initialSetUp() throws SQLException {
         userRepository = new UserRepository();
         bookRepository = new BookRepository();
-        user = new UserReader(3, userRepository, bookRepository);
+        user = new UserReader(6, userRepository, bookRepository);
     }
 
     @Test
-    public void testGetBookByName() throws SQLException {
+    public void testGetBookByName() {
         ArrayList<Book> books = user.searchBookByName("Ulysses");
 
         System.out.println(books.size());
@@ -50,4 +50,23 @@ public class UserReaderTest {
     }
 
 
+    @Test
+    public void testSortLibraryByAuthor() {
+        user.sortLibraryByAuthor();
+    }
+
+    @Test
+    public void testSortLibraryByGenre() {
+        user.sortLibraryByGenre();
+    }
+
+    @Test
+    public void testSortLibraryByTitle() {
+        user.sortLibraryByTitle();
+    }
+
+    @Test
+    public void testShowLastRead() {
+        user.showLastRead();
+    }
 }

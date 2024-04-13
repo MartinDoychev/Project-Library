@@ -2,6 +2,7 @@ package book;
 
 import enums.BookAccess;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public interface IBookRepository {
@@ -34,5 +35,9 @@ public interface IBookRepository {
     Double getRatingByBookID(int bookID);
 
     BookAccess getAccessByBookID(int bookID);
+
+    void rateBook(int bookID, double newRating) throws SQLException;
+
+    Book getBookByID(int bookID) throws SQLException;
 
 }

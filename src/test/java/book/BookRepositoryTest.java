@@ -44,7 +44,7 @@ public class BookRepositoryTest{
     }
 
     @Test
-    public void testGetAuthorById() throws SQLException {
+    public void testGetAuthorById() {
         String authorName = bookRepository.getAuthor(10);
 
         System.out.println(authorName);
@@ -52,7 +52,7 @@ public class BookRepositoryTest{
     }
 
     @Test
-    public void testGetAuthorID() throws SQLException {
+    public void testGetAuthorID() {
         int id = bookRepository.getAuthorId("George Orwell");
 
         System.out.println(id);
@@ -60,7 +60,7 @@ public class BookRepositoryTest{
     }
 
     @Test
-    public void testGetGenreById() throws SQLException {
+    public void testGetGenreById() {
         String genreName = bookRepository.getGenre(3);
 
         System.out.println(genreName);
@@ -68,13 +68,15 @@ public class BookRepositoryTest{
     }
 
     @Test
-    public void testGetLanguageById() throws SQLException {
+    public void testGetLanguageById() {
         String languageName = bookRepository.getLanguage(4);
 
         System.out.println(languageName);
         Assert.assertEquals("Bulgarian", languageName);
     }
 
-    public void testAddBook() {
+    @Test
+    public void testRateBook() throws SQLException {
+        bookRepository.rateBook(2, 2.1);
     }
 }

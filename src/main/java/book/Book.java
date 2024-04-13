@@ -15,7 +15,7 @@ public class Book {
     private BookAccess access;
     private boolean isRead;
 
-    private IBookRepository bookRepository;
+    private final IBookRepository bookRepository;
 
     public Book() throws SQLException {
         this.bookID = 0;
@@ -56,6 +56,14 @@ public class Book {
         this.isRead = isRead;
     }
 
+    public String getGenre() {
+        return genre;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
     public double getRating() {
         return rating;
     }
@@ -73,8 +81,9 @@ public class Book {
 
     public String toString() {
         StringBuilder result = new StringBuilder();
+        String isBookRead = isRead ? "Read" : "Not read";
         result.append("| ")
-              .append(String.format("%-10s | %-40s | %-20s | %-30s | %-20s | %5.02f |", bookID, title, author, genre, language, rating));
+              .append(String.format("%-10s | %-40s | %-20s | %-30s | %-20s | %5.02f | %-15s |", bookID, title, author, genre, language, rating, isBookRead));
 
         return result.toString();
     }

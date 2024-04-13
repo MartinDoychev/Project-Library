@@ -1,7 +1,6 @@
 package user.interfaces;
 
 import book.Book;
-import library.Library;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,14 +12,14 @@ public interface Reader {
 
     boolean addToLibrary(String bookName);
 
-    void sortLibraryByAuthor(Library library);
+    void sortLibraryByAuthor();
 
-    void sortLibraryByName(Library library);
+    void sortLibraryByTitle();
 
-    void sortLibraryByGenre(Library library);
+    void sortLibraryByGenre();
 
-    void rateBook(String title);
+    void rateBook(int bookID, double rating);
 
-    void showLastRead();
+    void showLastRead() throws SQLException;
 
 }
