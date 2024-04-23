@@ -2,6 +2,7 @@ package book;
 
 import enums.BookAccess;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -18,9 +19,9 @@ public interface IBookRepository {
 
     String getLanguage(int languageID);
 
-    void addBook();
-
     boolean bookExistsInGeneralLibrary(String bookName);
+
+    boolean authorExistsInGeneralLibrary(String authorName);
 
     String getBookNameByBookID(int bookID);
 
@@ -40,4 +41,15 @@ public interface IBookRepository {
 
     Book getBookByID(int bookID) throws SQLException;
 
+    Connection getConnection();
+
+    int getBookAccessByID(BookAccess access);
+
+    int getGenreID(String genre);
+
+    int getLanguageID(String language);
+
+    int getBookCountFromAllLibraries(int libraryID, int bookID);
+
+    boolean bookExistsInLibrary(int libraryID, int bookID);
 }

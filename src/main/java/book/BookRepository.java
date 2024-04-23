@@ -12,6 +12,11 @@ import java.util.ArrayList;
 public class BookRepository implements IBookRepository {
     private final Connection connection;
 
+    @Override
+    public Connection getConnection() {
+        return connection;
+    }
+
     public BookRepository() throws SQLException {
         DBConnectionManager instance = DBConnectionManager.getInstance();
         this.connection = instance.getConnection();
@@ -140,6 +145,8 @@ public class BookRepository implements IBookRepository {
         return bookAccess;
     }
 
+
+
     public static BookAccess getTheBookAccess(int access) {
         BookAccess bookAccess = BookAccess.AVAILABLE;
         switch (access) {
@@ -234,11 +241,6 @@ public class BookRepository implements IBookRepository {
     }
 
     @Override
-    public void addBook() {
-
-    }
-
-    @Override
     public boolean bookExistsInGeneralLibrary(String bookName) {
         int bookCount = 0;
 
@@ -256,6 +258,28 @@ public class BookRepository implements IBookRepository {
         }
 
         return bookCount > 0;
+    }
+
+    @Override
+    public boolean authorExistsInGeneralLibrary(String authorName) {
+        int authorCount = 0;
+
+        try {
+            String selectQuery = "select count(*) from user u join\n" +
+                    "author a on u.UserID = a.UserID\n" +
+                    "where concat(u.FirstName, \" \", u.LastName) like ?";
+            PreparedStatement selectStatement = this.connection.prepareStatement(selectQuery);
+            selectStatement.setString(1, String.valueOf(authorName));
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()) {
+                authorCount = resultSet.getInt("count(*)");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+
+        return authorCount > 0;
     }
 
     public String getBookNameByBookID(int bookID) {
@@ -347,7 +371,7 @@ public class BookRepository implements IBookRepository {
 
             if (resultSet.next()) {
                 int languageID = resultSet.getInt("LanguageID");
-                bookLanguage = getGenre(languageID);
+                bookLanguage = getLanguage(languageID);
             }
         } catch (SQLException e) {
             System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
@@ -419,6 +443,111 @@ public class BookRepository implements IBookRepository {
         } catch (SQLException e) {
             System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
         }
+    }
+
+    @Override
+    public int getBookAccessByID(BookAccess access) {
+        int bookAccess = -1;
+        switch (access) {
+            case AVAILABLE:
+                bookAccess = 1;
+                break;
+            case STAGED:
+                bookAccess = 2;
+                break;
+            case ANNOUNCED:
+                bookAccess = 3;
+                break;
+        }
+        return bookAccess;
+    }
+
+    @Override
+    public int getGenreID(String genre) {
+        int genreID = -1;
+
+        try {
+            String selectQuery = "select g.genreID from genre g \n" +
+                    "where g.genreName like ?";
+            PreparedStatement selectStatement = this.connection.prepareStatement(selectQuery);
+            selectStatement.setString(1, genre);
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()) {
+                genreID = resultSet.getInt("genreID");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return genreID;
+    }
+
+    @Override
+    public int getLanguageID(String language) {
+        int languageID = -1;
+
+        try {
+            String selectQuery = "select l.languageID  from language l \n" +
+                    "where l.languageName like ?";
+            PreparedStatement selectStatement = this.connection.prepareStatement(selectQuery);
+            selectStatement.setString(1, language);
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()) {
+                languageID = resultSet.getInt("languageID");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return languageID;
+    }
+
+
+    /**
+     * @param libraryID
+     * @param bookID
+     * @return book count of this bookId appearing in all libraries EXCEPT the given one
+     */
+    @Override
+    public int getBookCountFromAllLibraries(int libraryID, int bookID) {
+        int count = 0;
+        try {
+            String selectQuery = "select count(*) as countAppearances from bookLibrary bl\n" +
+                    "where bl.LibraryID != ?\n" +
+                    "and bl.BookID = ?";
+            PreparedStatement selectStatement = this.connection.prepareStatement(selectQuery);
+            selectStatement.setString(1, String.valueOf(libraryID));
+            selectStatement.setString(2, String.valueOf(bookID));
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()) {
+                count = resultSet.getInt("countAppearances");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return count;
+    }
+
+    @Override
+    public boolean bookExistsInLibrary(int libraryID, int bookID) {
+        int count = 0;
+        try {
+            String selectQuery = "select count(*) as countAppearances from bookLibrary bl\n" +
+                    "where bl.LibraryID = ?\n" +
+                    "and bl.BookID = ?";
+            PreparedStatement selectStatement = this.connection.prepareStatement(selectQuery);
+            selectStatement.setString(1, String.valueOf(libraryID));
+            selectStatement.setString(2, String.valueOf(bookID));
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()) {
+                count = resultSet.getInt("countAppearances");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return count > 0;
     }
 
 }

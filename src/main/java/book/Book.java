@@ -2,6 +2,8 @@ package book;
 
 import enums.BookAccess;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Book {
@@ -16,6 +18,18 @@ public class Book {
     private boolean isRead;
 
     private final IBookRepository bookRepository;
+
+    public IBookRepository getBookRepository() {
+        return bookRepository;
+    }
+
+    public String getISBN() {
+        return ISBN;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
 
     public Book() throws SQLException {
         this.bookID = 0;
@@ -83,9 +97,42 @@ public class Book {
         StringBuilder result = new StringBuilder();
         String isBookRead = isRead ? "Read" : "Not read";
         result.append("| ")
-              .append(String.format("%-10s | %-40s | %-20s | %-30s | %-20s | %5.02f | %-15s |", bookID, title, author, genre, language, rating, isBookRead));
+              .append(String.format("%-10s | %-40s | %-40s | %-30s | %-20s | %5.02f | %-15s |", bookID, title, author, genre, language, rating, isBookRead));
 
         return result.toString();
+    }
+
+    public String toStringAuthor() {
+        String access = convertAccess(this.access);
+        StringBuilder result = new StringBuilder();
+        result.append("| ")
+                .append(String.format("%-40s | %-40s | %-30s | %-20s | %10.02f | %-10s |", title, author, genre, language, rating, access));
+
+        return result.toString();
+    }
+
+    public String toStringReader() {
+        StringBuilder result = new StringBuilder();
+        result.append("| ")
+                .append(String.format("%-40s | %-40s | %-30s | %-20s | %10.02f |", title, author, genre, language, rating));
+
+        return result.toString();
+    }
+
+    private String convertAccess(BookAccess access) {
+        String result = "";
+        switch (access) {
+            case AVAILABLE:
+                result = "AVAILABLE";
+                break;
+            case STAGED:
+                result = "STAGED";
+                break;
+            case ANNOUNCED:
+                result = "ANNOUNCED";
+                break;
+        }
+        return result;
     }
 
     public String getTitle() {
@@ -98,5 +145,50 @@ public class Book {
 
     public int getBookID() {
         return bookID;
+    }
+
+    public int getBookAccessID() {
+        return bookRepository.getBookAccessByID(this.access);
+    }
+
+    public int getGenreID() {
+        return bookRepository.getGenreID(this.genre);
+    }
+
+    public int getLanguageID() {
+        return bookRepository.getLanguageID(this.language);
+    }
+
+    public int getAuthorId() {
+        return bookRepository.getAuthorId(this.author);
+    }
+
+    public int getBookIDFromDB() {
+        int bookID = -1;
+
+        try {
+            String selectQuery = "select b.BookID  from book b\n" +
+                    "where b.Title = ?\n" +
+                    "and b.ISBN = ?";
+            PreparedStatement selectStatement = bookRepository.getConnection().prepareStatement(selectQuery);
+            selectStatement.setString(1, title);
+            selectStatement.setString(2, ISBN);
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()) {
+                bookID = resultSet.getInt("BookID");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return bookID;
+    }
+
+    public int getCountFromLibraries(int libraryID) {
+        return bookRepository.getBookCountFromAllLibraries(libraryID, bookID);
+    }
+
+    public boolean bookExistsInLibrary(int libraryID) {
+        return bookRepository.bookExistsInLibrary(libraryID, this.bookID);
     }
 }

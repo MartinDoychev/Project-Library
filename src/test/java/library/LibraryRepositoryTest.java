@@ -29,7 +29,7 @@ public class LibraryRepositoryTest {
 
     @Test
     public void testAddBookToLibrary() {
-        ArrayList<Book> books = bookRepository.searchBookByName("The Count of Monte Cristo");
+        ArrayList<Book> books = bookRepository.searchBookByName("Lolita");
         Book book = books.get(0);
         Library library = new Library(6, "albertCam", libraryRepository);
         int rows = libraryRepository.addToLibrary(book, library);

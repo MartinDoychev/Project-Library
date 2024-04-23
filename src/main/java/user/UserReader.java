@@ -2,6 +2,7 @@ package user;
 
 import book.Book;
 import book.IBookRepository;
+import console.menu.Menu;
 import enums.Role;
 import library.Library;
 import enums.BookAccess;
@@ -23,6 +24,7 @@ public class UserReader extends User implements Reader {
         this.bookRepository = bookRepository;
         this.library = userRepository.getUserLibrary(userID);
     }
+
 
     @Override
     public ArrayList<Book> searchBookByName(String bookName) {
@@ -74,27 +76,33 @@ public class UserReader extends User implements Reader {
     public void sortLibraryByAuthor() {
         int userID = super.getUserID();
         ArrayList<Book> books = super.getUserRepository().getUserLibraryListSortedBy(userID, "AuthorName");
+        Menu.printReaderLibraryHeader();
         for (Book book : books) {
-            System.out.println(book.toString());
+            System.out.println(book.toStringReader());
         }
+        Menu.printReaderLibraryFooter();
     }
 
     @Override
     public void sortLibraryByGenre() {
         int userID = super.getUserID();
         ArrayList<Book> books = super.getUserRepository().getUserLibraryListSortedBy(userID, "g.genreName");
+        Menu.printReaderLibraryHeader();
         for (Book book : books) {
-            System.out.println(book.toString());
+            System.out.println(book.toStringReader());
         }
+        Menu.printReaderLibraryFooter();
     }
 
     @Override
     public void sortLibraryByTitle() {
         int userID = super.getUserID();
         ArrayList<Book> books = super.getUserRepository().getUserLibraryListSortedBy(userID, "b.Title");
+        Menu.printReaderLibraryHeader();
         for (Book book : books) {
-            System.out.println(book.toString());
+            System.out.println(book.toStringReader());
         }
+        Menu.printReaderLibraryFooter();
     }
 
 
@@ -113,11 +121,13 @@ public class UserReader extends User implements Reader {
     @Override
     public void showLastRead() {
         int userID = super.getUserID();
-        ArrayList<Book> books = super.getUserRepository().getUserLibraryListSortedBy(userID, "bl.DateRead DESC LIMIT 5");
+        ArrayList<Book> books = super.getUserRepository().getUserLibraryListSortedBy(userID, "bl.DateRead DESC");
+        Menu.printReaderLibraryHeader();
         for (Book book : books) {
             if (book.getIsRead()) {
-                System.out.println(book.toString());
+                System.out.println(book.toStringReader());
             }
         }
+        Menu.printReaderLibraryFooter();
     }
 }

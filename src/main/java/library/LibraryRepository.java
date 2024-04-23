@@ -57,13 +57,17 @@ public class LibraryRepository implements ILibraryRepository {
         int bookID = book.getBookID();
         int libraryID = library.getLibraryID();
         try {
-            String insertQuery = "INSERT into bookLibrary (BookID,LibraryID,ReadFlag,DateRead) values (?, ?, ?, ?)";
-            PreparedStatement insertStatement = this.connection.prepareStatement(insertQuery);
-            insertStatement.setString(1, String.valueOf(bookID));
-            insertStatement.setString(2, String.valueOf(libraryID));
-            insertStatement.setString(3, "0");
-            insertStatement.setString(4, String.valueOf(LocalDateTime.now()));
-            rowsInserted = insertStatement.executeUpdate();
+            if (book.bookExistsInLibrary(libraryID)) {
+                return 0;
+            } else {
+                String insertQuery = "INSERT into bookLibrary (BookID,LibraryID,ReadFlag,DateRead) values (?, ?, ?, ?)";
+                PreparedStatement insertStatement = this.connection.prepareStatement(insertQuery);
+                insertStatement.setString(1, String.valueOf(bookID));
+                insertStatement.setString(2, String.valueOf(libraryID));
+                insertStatement.setString(3, "0");
+                insertStatement.setString(4, String.valueOf(LocalDateTime.now()));
+                rowsInserted = insertStatement.executeUpdate();
+            }
         } catch (SQLException e) {
             System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
         }
