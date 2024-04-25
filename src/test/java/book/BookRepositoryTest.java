@@ -78,7 +78,13 @@ public class BookRepositoryTest{
 
     @Test
     public void testRateBook() throws SQLException {
-        bookRepository.rateBook(2, 2.1);
+        bookRepository.rateBook(2, 17, 2.1);
+    }
+
+    @Test
+    public void testRatingExistsInUserRating() {
+        Assert.assertTrue(bookRepository.ratingExistsInUserRating(2, 17));
+        Assert.assertFalse(bookRepository.ratingExistsInUserRating(3, 17));
     }
 
     @Test
@@ -192,4 +198,14 @@ public class BookRepositoryTest{
         Assert.assertTrue(bookRepository.bookExistsInLibrary(6, 1));
         Assert.assertFalse(bookRepository.bookExistsInLibrary(7, 1));
     }
+
+//    @Test
+//    public void testGetAverageRatingFromDB() {
+//        Assert.assertEquals(4.23, bookRepository.getAverageRatingFromDB(1), 0.0003f);
+//    }
+
+//    @Test
+//    public void testAddRatingToUSerRatingTable() {
+//        bookRepository.addRatingToUserRatingTable(4, 4, 4.44);
+//    }
 }

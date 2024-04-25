@@ -140,10 +140,11 @@ public class Menu {
         System.out.println("*****************************************");
         System.out.println("|                                       |");
         System.out.println("| 1. Search book                        |");
-        System.out.println("| 2. Show last read                     |");
-        System.out.println("| 3. Sort library                       |");
-        System.out.println("| 4. Rate book                          |");
-        System.out.println("| 5. Exit                               |");
+        System.out.println("| 2. Add book to library                |");
+        System.out.println("| 3. Show last read                     |");
+        System.out.println("| 4. Sort library                       |");
+        System.out.println("| 5. Rate book                          |");
+        System.out.println("| 6. Exit                               |");
         System.out.println("|                                       |");
         System.out.println("*****************************************");
         System.out.println("|                                       |");
@@ -156,7 +157,8 @@ public class Menu {
         System.out.println("|                                       |");
         System.out.println("| 1. Upload book                        |");
         System.out.println("| 2. Show library                       |");
-        System.out.println("| 3. Exit                               |");
+        System.out.println("| 3. Update book access                 |");
+        System.out.println("| 4. Exit                               |");
         System.out.println("|                                       |");
         System.out.println("*****************************************");
         System.out.println("|                                       |");
@@ -229,35 +231,35 @@ public class Menu {
     }
 
     public static void printAuthorLibraryHeader() {
-        System.out.printf("| %-40s | %-40s | %-30s | %-20s | %10s | %10s | %10s |\n", "TITLE", "AUTHOR", "GENRE", "LANGUAGE", "RATING", "ACCESS", "#LISTING");
-        System.out.println("**************************************************************************************************************************************************************************************");
+        System.out.printf("| %-50s | %-40s | %-30s | %-20s | %10s | %10s | %10s |\n", "TITLE", "AUTHOR", "GENRE", "LANGUAGE", "RATING", "ACCESS", "#LISTING");
+        System.out.println("************************************************************************************************************************************************************************************************");
     }
 
     public static void printAuthorLibraryFooter() {
-        System.out.println("**************************************************************************************************************************************************************************************");
-        System.out.println("|                                                                                                                                                                                    |");
+        System.out.println("************************************************************************************************************************************************************************************************");
+        System.out.println("|                                                                                                                                                                                              |");
     }
 
     public static void printReaderLibraryHeader() {
-        System.out.printf("| %-40s | %-40s | %-30s | %-20s | %10s |\n", "TITLE", "AUTHOR", "GENRE", "LANGUAGE", "RATING");
-        System.out.println("************************************************************************************************************************************************************");
+        System.out.printf("| %-50s | %-40s | %-30s | %-20s | %10s |\n", "TITLE", "AUTHOR", "GENRE", "LANGUAGE", "RATING");
+        System.out.println("**********************************************************************************************************************************************************************");
     }
 
     public static void printReaderLibraryFooter() {
-        System.out.println("************************************************************************************************************************************************************");
-        System.out.println("|                                                                                                                                                          |");
+        System.out.println("**********************************************************************************************************************************************************************");
+        System.out.println("|                                                                                                                                                                    |");
     }
 
     public static void printReaderLastRead() {
-        System.out.println("|                                                                    LAST READ                                                                             |");
-        System.out.println("************************************************************************************************************************************************************");
-        System.out.println("|                                                                                                                                                          |");
+        System.out.println("|                                                                         LAST READ                                                                                  |");
+        System.out.println("**********************************************************************************************************************************************************************");
+        System.out.println("|                                                                                                                                                                    |");
     }
 
     public static void printSortedBy(String sortedBy) {
         System.out.print("|                                                                  SORTED BY ");
-        System.out.print(sortedBy + " ".repeat(78 - sortedBy.length()) + "|\n");
-        System.out.println("************************************************************************************************************************************************************");
-        System.out.println("|                                                                                                                                                          |");
+        System.out.print(sortedBy + " ".repeat(88 - sortedBy.length()) + "|\n");
+        System.out.println("**********************************************************************************************************************************************************************");
+        System.out.println("|                                                                                                                                                                    |");
     }
 }

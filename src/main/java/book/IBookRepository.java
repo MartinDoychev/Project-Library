@@ -37,7 +37,7 @@ public interface IBookRepository {
 
     BookAccess getAccessByBookID(int bookID);
 
-    void rateBook(int bookID, double newRating) throws SQLException;
+    void rateBook(int bookID, int userID, double newRating) throws SQLException;
 
     Book getBookByID(int bookID) throws SQLException;
 
@@ -52,4 +52,9 @@ public interface IBookRepository {
     int getBookCountFromAllLibraries(int libraryID, int bookID);
 
     boolean bookExistsInLibrary(int libraryID, int bookID);
+
+    void setBookAccessInDB(int bookID, BookAccess access);
+
+    boolean ratingExistsInUserRating(int bookID, int userID);
+    int getBookIDbyName(String bookName);
 }
