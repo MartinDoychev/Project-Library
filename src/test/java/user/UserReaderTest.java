@@ -69,4 +69,9 @@ public class UserReaderTest {
     public void testShowLastRead() {
         user.showLastRead();
     }
+
+    @Test
+    public void testRateBook() {
+        user.rateBook(3, 4.5);
+    }
 }

@@ -31,6 +31,18 @@ public class Book {
         return language;
     }
 
+    public Book(String bookName, boolean isRead) throws SQLException {
+        this.bookRepository = new BookRepository();
+        this.bookID = bookRepository.getBookIDbyName(bookName);
+        this.title = bookName;
+        this.author = bookRepository.getAuthorByBookID(this.bookID);
+        this.ISBN = bookRepository.getISBNByBookID(this.bookID);
+        this.genre = bookRepository.getGenreByBookID(this.bookID);
+        this.language = bookRepository.getLanguageByBookID(this.bookID);
+        this.rating = bookRepository.getRatingByBookID(this.bookID);
+        this.access = BookAccess.ANNOUNCED;
+        this.isRead = isRead;
+    }
     public Book() throws SQLException {
         this.bookID = 0;
         this.title = "";
@@ -97,7 +109,7 @@ public class Book {
         StringBuilder result = new StringBuilder();
         String isBookRead = isRead ? "Read" : "Not read";
         result.append("| ")
-              .append(String.format("%-10s | %-40s | %-40s | %-30s | %-20s | %5.02f | %-15s |", bookID, title, author, genre, language, rating, isBookRead));
+              .append(String.format("%-10s | %-50s | %-40s | %-30s | %-20s | %5.02f | %-15s |", bookID, title, author, genre, language, rating, isBookRead));
 
         return result.toString();
     }
@@ -106,7 +118,7 @@ public class Book {
         String access = convertAccess(this.access);
         StringBuilder result = new StringBuilder();
         result.append("| ")
-                .append(String.format("%-40s | %-40s | %-30s | %-20s | %10.02f | %-10s |", title, author, genre, language, rating, access));
+                .append(String.format("%-50s | %-40s | %-30s | %-20s | %10.02f | %-10s |", title, author, genre, language, rating, access));
 
         return result.toString();
     }
@@ -114,7 +126,7 @@ public class Book {
     public String toStringReader() {
         StringBuilder result = new StringBuilder();
         result.append("| ")
-                .append(String.format("%-40s | %-40s | %-30s | %-20s | %10.02f |", title, author, genre, language, rating));
+                .append(String.format("%-50s | %-40s | %-30s | %-20s | %10.02f |", title, author, genre, language, rating));
 
         return result.toString();
     }
@@ -190,5 +202,10 @@ public class Book {
 
     public boolean bookExistsInLibrary(int libraryID) {
         return bookRepository.bookExistsInLibrary(libraryID, this.bookID);
+    }
+
+    public void setAccessINDB(BookAccess access) {
+        this.access = access;
+        this.bookRepository.setBookAccessInDB(this.bookID, access);
     }
 }

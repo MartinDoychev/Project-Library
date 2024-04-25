@@ -110,8 +110,10 @@ public class UserReader extends User implements Reader {
     public void rateBook(int bookID, double rating) {
         try {
             Book book = bookRepository.getBookByID(bookID);
-            if (book.getAccess() == BookAccess.AVAILABLE) {
-                bookRepository.rateBook(bookID, rating);
+            if (!bookRepository.ratingExistsInUserRating(bookID, super.getUserID())) {
+                if (book.getAccess() == BookAccess.AVAILABLE) {
+                    bookRepository.rateBook(bookID, super.getUserID(), rating);
+                }
             }
         } catch (SQLException e) {
             System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());

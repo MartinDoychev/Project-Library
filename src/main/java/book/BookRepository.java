@@ -420,20 +420,72 @@ public class BookRepository implements IBookRepository {
     }
 
     @Override
-    public void rateBook(int bookID, double newRating) throws SQLException {
+    public void rateBook(int bookID, int userID, double rating) throws SQLException {
         Book book = getBookByID(bookID);
-        double rating = book.getRating();
 
-        if (rating == 0) {
-            rating = newRating;
-        } else {
-            rating = (rating + newRating) / 2;
+        if (addRatingToUserRatingTable(bookID, userID, rating)) {
+            double updatedRating = getAverageRatingFromDB(bookID);
+            setRatingByBookIDInBookTable(bookID, updatedRating);
         }
-
-        setRatingByBookID(bookID, rating);
     }
 
-    private void setRatingByBookID(int bookID, double rating) {
+    @Override
+    public boolean ratingExistsInUserRating(int bookID, int userID) {
+        int countRows = 0;
+        try {
+            String selectQuery = "select count(*) as records from UserRating ur \n" +
+                    "where bookID = ?\n" +
+                    "and userID = ?";
+            PreparedStatement selectStatement = this.connection.prepareStatement(selectQuery);
+            selectStatement.setString(1, String.valueOf(bookID));
+            selectStatement.setString(2, String.valueOf(userID));
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if(resultSet.next()) {
+                countRows = resultSet.getInt("records");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+
+        return countRows > 0;
+    }
+
+    private boolean addRatingToUserRatingTable(int bookID, int userID, double rating) {
+        int rowsInserted = 0;
+        try {
+            String insertQuery = "INSERT INTO academy.UserRating\n" +
+                    "(bookID, userID, rating)\n" +
+                    "VALUES(?, ?, ?)";
+            PreparedStatement insertStatement = this.connection.prepareStatement(insertQuery);
+            insertStatement.setString(1, String.valueOf(bookID));
+            insertStatement.setString(2, String.valueOf(userID));
+            insertStatement.setString(3, String.valueOf(rating));
+            rowsInserted = insertStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return rowsInserted > 0;
+    }
+
+    public double getAverageRatingFromDB(int bookID) {
+        double rating = 0.0;
+        try {
+            String selectQuery = "select Rating from bookRating where bookID = ?";
+            PreparedStatement selectStatement = this.connection.prepareStatement(selectQuery);
+            selectStatement.setString(1, String.valueOf(bookID));
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if(resultSet.next()) {
+                rating = resultSet.getDouble("Rating");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return rating;
+    }
+
+    public void setRatingByBookIDInBookTable(int bookID, double rating) {
         try {
             String updateQuery = "UPDATE book SET rating = ? WHERE BookID = ?";
             PreparedStatement updateStatement = this.connection.prepareStatement(updateQuery);
@@ -460,6 +512,25 @@ public class BookRepository implements IBookRepository {
                 break;
         }
         return bookAccess;
+    }
+
+    @Override
+    public void setBookAccessInDB(int bookID, BookAccess access) {
+        int bookAccess = getBookAccessByID(access);
+
+        try {
+            String selectQuery = "UPDATE academy.book\n" +
+                    "SET AccessID= ?\n" +
+                    "WHERE BookID=?";
+            PreparedStatement updateStatement = this.connection.prepareStatement(selectQuery);
+            updateStatement.setString(1, String.valueOf(bookAccess));
+            updateStatement.setString(2, String.valueOf(bookID));
+            updateStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+
     }
 
     @Override
@@ -548,6 +619,26 @@ public class BookRepository implements IBookRepository {
             System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
         }
         return count > 0;
+    }
+
+    @Override
+    public int getBookIDbyName(String bookName) {
+        int bookID = 0;
+        try {
+            String selectQuery = "select bookID from book b \n" +
+                    "where b.Title = ?";
+            PreparedStatement selectStatement = this.connection.prepareStatement(selectQuery);
+            selectStatement.setString(1, bookName);
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()) {
+                bookID = resultSet.getInt("bookID");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+
+        return bookID;
     }
 
 }

@@ -62,7 +62,7 @@ public class ConsoleInteraction {
 
         choice = getChoice(scan);
 
-        while (choice > 0 && choice <= 3) {
+        while (choice > 0 && choice <= 4) {
             switch (choice) {
                 case 1:
                     Book book = getBookDetails(scan, menu);
@@ -73,10 +73,31 @@ public class ConsoleInteraction {
                     author.showMyLibrary();
                     break;
                 case 3:
+                    updateBookAccess(author, scan, menu);
+                    break;
+                case 4:
                     return;
             }
             menu.printAuthorMenu();
             choice = getChoice(scan);
+        }
+    }
+
+    private void updateBookAccess(UserAuthor author, Scanner scan, Menu menu) throws SQLException {
+        System.out.println("  Book name:");
+        String bookName = getBookName(scan);
+        BookRepository bookRepository = new BookRepository();
+
+        int bookID = bookRepository.getBookIDbyName(bookName);
+        Book book = new Book(bookID, true);
+        menu.printAccessOptions();
+        BookAccess bookAccess = getAccess(scan);
+
+        if (book.getAccess() == bookAccess) {
+            System.out.println("  You entered the same access!");
+        } else {
+            book.setAccessINDB(bookAccess);
+            System.out.println("  Access successfully updated!");
         }
     }
 
@@ -164,38 +185,63 @@ public class ConsoleInteraction {
         return bookAccess;
     }
 
-    private void interactWithReader(UserReader reader, Scanner scan, Menu menu) {
+    private void interactWithReader(UserReader reader, Scanner scan, Menu menu) throws SQLException {
         int choice = 0;
         menu.printReaderMenu();
 
         choice = getChoice(scan);
 
-        while (choice > 0 && choice <= 5) {
+        while (choice > 0 && choice <= 6) {
             switch (choice) {
                 case 1:
                     ReaderSearchBook(reader, scan, menu);
                     break;
                 case 2:
+                    ReaderAddBook(reader, scan);
+                    break;
+                case 3:
                     Menu.printReaderLastRead();
                     reader.showLastRead();
                     break;
-                case 3:
+                case 4:
                     ReaderSortLibrary(reader, scan, menu);
                     break;
-                case 4:
+                case 5:
                     System.out.println("  Book name: ");
                     int bookID = getBookID(scan, menu);
                     System.out.println(" Book rating: ");
                     double rating = getRating(scan, menu);
                     reader.rateBook(bookID, rating);
+                    System.out.println("Rating added!");
                     break;
-                case 5:
+                case 6:
                     return;
             }
             menu.printReaderMenu();
             choice = getChoice(scan);
         }
 
+    }
+
+    private void ReaderAddBook(UserReader reader, Scanner scan) throws SQLException {
+        System.out.println("  Book to add:");
+        String bookName = getBookName(scan);
+        BookRepository bookRepository = new BookRepository();
+        int bookID = bookRepository.getBookIDbyName(bookName);
+        System.out.println("  Read?\n    1. Yes\n    2. No");
+        int read = getChoice(scan);
+        boolean isRead = read == 1;
+        Book book = new Book(bookID, isRead);
+        if (!book.bookExistsInLibrary(reader.getUserRepository().getUserLibraryID(reader.getUserID()))) {
+            boolean bookAdded = reader.addToLibrary(bookName);
+            if (bookAdded) {
+                System.out.println("  Book successfully added!");
+            } else {
+                System.out.println("  Unable to add!");
+            }
+        } else {
+            System.out.println("  This book is already added!");
+        }
     }
 
     private int getBookID(Scanner scan, Menu menu) {

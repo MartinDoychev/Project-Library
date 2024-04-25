@@ -16,7 +16,7 @@ public class BookTest {
         // int bookID, String title, String author, String ISBN, String genre, String language, double rating, BookAccess access, boolean isRead
         book1 = new Book(3, "The Great Gatsby", "Albert Camus", "57462559716", "Literary Fiction", "English", 0.0, BookAccess.AVAILABLE, true);
         book2 = new Book(29, true);
-        book3 = new Book();
+        book3 = new Book("The Great Gatsby", true);
         bookRepository = new BookRepository();
     }
 
