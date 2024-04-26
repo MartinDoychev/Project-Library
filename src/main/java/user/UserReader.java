@@ -2,6 +2,7 @@ package user;
 
 import book.Book;
 import book.IBookRepository;
+import enums.Role;
 import library.Library;
 import enums.BookAccess;
 import user.interfaces.Reader;
@@ -11,16 +12,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class UserReader extends User implements Reader {
-
-
-    private final IUserRepository userRepository;
     private final IBookRepository bookRepository;
     private Library library;
 
 
     public UserReader(int userID, IUserRepository userRepository, IBookRepository bookRepository) throws SQLException {
-        super(userID);
-        this.userRepository = userRepository;
+        super(userID, Role.READER, userRepository);
+//        this.userRepository = userRepository;
         this.bookRepository = bookRepository;
         this.library = userRepository.getUserLibrary(userID);
     }
