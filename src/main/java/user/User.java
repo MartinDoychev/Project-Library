@@ -107,6 +107,80 @@ public class User {
 
     }
 
+    public static User getUserFromDBByUserID(int userID) throws SQLException {
+        String firstName = "";
+        String lastName = "";
+        String email = "";
+        String phoneNumber = "";
+        String userName = getUserNameFromDB(userID);
+        String encPassword = getPasswordFromDB(userID);
+        Role role = getRoleFromDB(userID);
+
+        IUserRepository userRepository = new UserRepository();
+
+        try {
+            String selectQuery = "select * from user where UserID = ?";
+            PreparedStatement selectStatement = userRepository.getConnection().prepareStatement(selectQuery);
+            selectStatement.setString(1, String.valueOf(userID));
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (!resultSet.next()) {
+                return new User();
+            } else {
+                firstName = resultSet.getString("FirstName");
+                lastName = resultSet.getString("LastName");
+                email = resultSet.getString("email");
+                phoneNumber = resultSet.getString("phoneNumber");
+            }
+
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+
+        return new User(userID, firstName, lastName, email, phoneNumber, userName, encPassword, role, userRepository);
+
+    }
+
+    public static String getUserNameFromDB(int userID) {
+        String userName = "";
+        try {
+            IUserRepository userRepository = new UserRepository();
+            String selectQuery = "select userName from credentials c \n" +
+                    "where userID = ?";
+            PreparedStatement selectStatement = userRepository.getConnection().prepareStatement(selectQuery);
+            selectStatement.setString(1, String.valueOf(userID));
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()){
+                userName = resultSet.getString("userName");
+            }
+
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return userName;
+    }
+
+    public static String getPasswordFromDB(int userID) {
+        String encPassword = "";
+        try {
+            IUserRepository userRepository = new UserRepository();
+            String selectQuery = "select password from credentials c \n" +
+                    "where userID = ?";
+            PreparedStatement selectStatement = userRepository.getConnection().prepareStatement(selectQuery);
+            selectStatement.setString(1, String.valueOf(userID));
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()){
+                encPassword = resultSet.getString("password");
+            }
+
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return encPassword;
+    }
+
     public static Role getRoleFromDB(int userID) throws SQLException {
         int roleID = 0;
         IUserRepository userRepository = new UserRepository();
@@ -206,7 +280,7 @@ public class User {
         StringBuilder result = new StringBuilder();
 
         result.append("| ")
-                .append(String.format("%-10d | %-20s | %-15s | %-15s | %-20s | %-30s | %-10s |"
+                .append(String.format("%-10d | %-40s | %-50s | %-40s | %-40s | %-50s | %-10s |"
                         , userID, firstName.concat(" " + lastName), email, phoneNumber, userName, password, role));
 
         return result.toString();
