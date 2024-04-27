@@ -124,7 +124,8 @@ public class UserAdmin extends User implements Admin {
     public void printUserDetails(int userID) throws SQLException {
         User user = User.getUserFromDBByUserID(userID);
         Menu.printAdminUserHeader();
-        System.out.println(user.toString());
+        System.out.print(user.toString());
+        System.out.printf(" %-10s |\n", user.isLocked());
         Menu.printAdminUserFooter();
     }
 }

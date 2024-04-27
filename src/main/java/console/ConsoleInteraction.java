@@ -302,7 +302,7 @@ public class ConsoleInteraction {
         boolean isRead = read == 1;
         Book book = new Book(bookID, isRead);
         if (!book.bookExistsInLibrary(reader.getUserRepository().getUserLibraryID(reader.getUserID()))) {
-            boolean bookAdded = reader.addToLibrary(bookName);
+            boolean bookAdded = reader.addToLibrary(bookName, isRead);
             if (bookAdded) {
                 System.out.println("  Book successfully added!");
             } else {

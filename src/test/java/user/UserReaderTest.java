@@ -45,7 +45,7 @@ public class UserReaderTest {
 
     @Test
     public void testAddBookToLibraryTrue() {
-        boolean result = user.addToLibrary("One Hundred Years of Solitude");
+        boolean result = user.addToLibrary("One Hundred Years of Solitude", true);
         Assert.assertTrue(result);
     }
 

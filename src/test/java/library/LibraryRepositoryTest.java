@@ -32,7 +32,7 @@ public class LibraryRepositoryTest {
         ArrayList<Book> books = bookRepository.searchBookByName("Lolita");
         Book book = books.get(0);
         Library library = new Library(6, "albertCam", libraryRepository);
-        int rows = libraryRepository.addToLibrary(book, library);
+        int rows = libraryRepository.addToLibrary(book, library, true);
         System.out.println(rows);
     }
 }

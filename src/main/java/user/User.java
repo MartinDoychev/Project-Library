@@ -301,6 +301,10 @@ public class User {
     public String getLastName() {
         return lastName;
     }
+
+    public boolean isLocked() {
+        return userRepository.isLocked(userID);
+    }
 }
 
 

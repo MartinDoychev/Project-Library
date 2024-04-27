@@ -187,4 +187,23 @@ public class UserRepository implements IUserRepository {
 
         return encryptedpassword;
     }
+
+    @Override
+    public boolean isLocked(int userID) {
+        boolean result = false;
+        try {
+            String selectQuery = "select isLocked from user\n" +
+                    "where UserID = ?";
+            PreparedStatement selectStatement = this.connection.prepareStatement(selectQuery);
+            selectStatement.setString(1, valueOf(userID));
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()) {
+                result = resultSet.getBoolean("isLocked");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return result;
+    }
 }

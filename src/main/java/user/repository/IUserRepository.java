@@ -19,4 +19,6 @@ public interface IUserRepository {
     }
 
     Connection getConnection();
+
+    boolean isLocked(int userID);
 }

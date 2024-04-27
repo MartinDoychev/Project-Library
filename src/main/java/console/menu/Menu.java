@@ -267,12 +267,12 @@ public class Menu {
     }
 
     public static void printAdminUserHeader() {
-        System.out.printf("| %-10s | %-40s | %-50s | %-40s | %-40s | %-50s | %-10s |\n", "User ID", "Name", "Email", "Phone number", "userName", "Password", "Role");
-        System.out.println("*".repeat(262));
+        System.out.printf("| %-10s | %-40s | %-50s | %-40s | %-40s | %-50s | %-10s | %-10s |\n", "User ID", "Name", "Email", "Phone number", "userName", "Password", "Role", "isLocked");
+        System.out.println("*".repeat(275));
     }
 
     public static void printAdminUserFooter() {
-        System.out.println("*".repeat(262));
-        System.out.println("|" + " ".repeat(260) + "|");
+        System.out.println("*".repeat(275));
+        System.out.println("|" + " ".repeat(273) + "|");
     }
 }
