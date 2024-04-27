@@ -52,7 +52,7 @@ public class LibraryRepository implements ILibraryRepository {
     }
 
     @Override
-    public int addToLibrary(Book book, Library library) {
+    public int addToLibrary(Book book, Library library, boolean isRead) {
         int rowsInserted = 0;
         int bookID = book.getBookID();
         int libraryID = library.getLibraryID();
@@ -64,7 +64,7 @@ public class LibraryRepository implements ILibraryRepository {
                 PreparedStatement insertStatement = this.connection.prepareStatement(insertQuery);
                 insertStatement.setString(1, String.valueOf(bookID));
                 insertStatement.setString(2, String.valueOf(libraryID));
-                insertStatement.setString(3, "0");
+                insertStatement.setBoolean(3, isRead);
                 insertStatement.setString(4, String.valueOf(LocalDateTime.now()));
                 rowsInserted = insertStatement.executeUpdate();
             }

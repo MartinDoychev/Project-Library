@@ -50,10 +50,79 @@ public class ConsoleInteraction {
                 interactWithAuthor(author, scan, menu);
                 break;
             case ADMIN:
-                UserAdmin admin = new UserAdmin();
-//                interactiWithAdmin(admin, scan, menu);
+                UserAdmin admin = new UserAdmin(user.getUserID(), user.getUserRepository());
+                interactWithAdmin(admin, scan, menu);
                 break;
         }
+    }
+
+    private void interactWithAdmin(UserAdmin admin, Scanner scan, Menu menu) throws SQLException {
+        int choice = 0;
+        menu.printAdminMenu();
+
+        choice = getChoice(scan);
+
+        while (choice > 0 && choice <= 4) {
+            switch (choice) {
+                case 1:
+                    System.out.println("  User ID to lock: ");
+                    int userIDLock = getUserID(scan);
+                    lockAccount(admin, userIDLock, scan);
+                    break;
+                case 2:
+                    System.out.println("  User ID to unlock: ");
+                    int userIDUnlock = getUserID(scan);
+                    unlockAccount(admin, userIDUnlock, scan);
+                    break;
+                case 3:
+                    System.out.println("  User ID to review: ");
+                    int userID = getUserID(scan);
+                    admin.printUserDetails(userID);
+                    break;
+                case 4:
+                    return;
+            }
+            menu.printAdminMenu();
+            choice = getChoice(scan);
+        }
+
+    }
+
+    private void lockAccount(UserAdmin admin, int userID, Scanner scan) {
+        if (!admin.getUserRepository().userExistsInGeneralDB(userID)) {
+            System.out.println("  This user does not exist!");
+        } else {
+            if (admin.lockAccount(userID)) {
+                System.out.println("  The account is LOCKED!");
+            } else {
+                System.out.println("  This account is already locked!");
+            }
+        }
+    }
+
+    private void unlockAccount(UserAdmin admin, int userID, Scanner scan) {
+        if (!admin.getUserRepository().userExistsInGeneralDB(userID)) {
+            System.out.println("  This user does not exist!");
+        } else {
+            if (admin.unlockAccount(userID)) {
+                System.out.println("  The account is UNLOCKED!");
+            } else {
+                System.out.println("  This account is already unlocked!");
+            }
+        }
+    }
+
+    private int getUserID(Scanner scan) {
+        String userID;
+        do {
+            userID = scan.nextLine();
+            if (userID.matches("\\d\\d")) {
+                break;
+            } else {
+                System.out.println("  Invalid Input!");
+            }
+        } while (!(scan.hasNextInt()) || !userID.matches("\\d\\d"));
+        return Integer.parseInt(userID);
     }
 
     private void interactWithAuthor(UserAuthor author, Scanner scan, Menu menu) throws SQLException {
@@ -233,7 +302,7 @@ public class ConsoleInteraction {
         boolean isRead = read == 1;
         Book book = new Book(bookID, isRead);
         if (!book.bookExistsInLibrary(reader.getUserRepository().getUserLibraryID(reader.getUserID()))) {
-            boolean bookAdded = reader.addToLibrary(bookName);
+            boolean bookAdded = reader.addToLibrary(bookName, isRead);
             if (bookAdded) {
                 System.out.println("  Book successfully added!");
             } else {

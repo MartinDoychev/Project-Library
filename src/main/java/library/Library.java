@@ -37,13 +37,13 @@ public class Library {
         this.libraryRepository = libraryRepository;
     }
 
-    public void addBookToLibrary(String bookName) {
+    public void addBookToLibrary(String bookName, boolean isRead) {
         try {
             BookRepository bookRepository = new BookRepository();
             ArrayList<Book> books = bookRepository.searchBookByName(bookName);
             for (Book book: books) {
                 this.books.put(book, LocalDate.now());
-                libraryRepository.addToLibrary(book, this);
+                libraryRepository.addToLibrary(book, this, isRead);
             }
 
         } catch (SQLException e) {

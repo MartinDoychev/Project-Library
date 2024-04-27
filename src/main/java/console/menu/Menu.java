@@ -171,7 +171,8 @@ public class Menu {
         System.out.println("|                                       |");
         System.out.println("| 1. Lock account                       |");
         System.out.println("| 2. Unlock account                     |");
-        System.out.println("| 3. Exit                               |");
+        System.out.println("| 3. User details                       |");
+        System.out.println("| 4. Exit                               |");
         System.out.println("|                                       |");
         System.out.println("*****************************************");
         System.out.println("|                                       |");
@@ -224,6 +225,8 @@ public class Menu {
         System.out.println("|                                       |");
     }
 
+
+
     public void printAddBookDetailsFooter() {
         System.out.println("|                                       |");
         System.out.println("*****************************************");
@@ -261,5 +264,15 @@ public class Menu {
         System.out.print(sortedBy + " ".repeat(88 - sortedBy.length()) + "|\n");
         System.out.println("**********************************************************************************************************************************************************************");
         System.out.println("|                                                                                                                                                                    |");
+    }
+
+    public static void printAdminUserHeader() {
+        System.out.printf("| %-10s | %-40s | %-50s | %-40s | %-40s | %-50s | %-10s | %-10s |\n", "User ID", "Name", "Email", "Phone number", "userName", "Password", "Role", "isLocked");
+        System.out.println("*".repeat(275));
+    }
+
+    public static void printAdminUserFooter() {
+        System.out.println("*".repeat(275));
+        System.out.println("|" + " ".repeat(273) + "|");
     }
 }
