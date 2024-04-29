@@ -31,6 +31,12 @@ public class ConsoleInteraction {
             } catch (SQLException e) {
                 System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
             }
+        } else {
+            try {
+                user = Menu.createAccount(scan);
+            } catch (SQLException e) {
+                System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+            }
         }
         return user;
     }

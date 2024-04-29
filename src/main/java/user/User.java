@@ -9,6 +9,7 @@ import user.repository.UserRepository;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 public class User {
     private int userID;
@@ -151,7 +152,7 @@ public class User {
             selectStatement.setString(1, String.valueOf(userID));
             ResultSet resultSet = selectStatement.executeQuery();
 
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 userName = resultSet.getString("userName");
             }
 
@@ -171,7 +172,7 @@ public class User {
             selectStatement.setString(1, String.valueOf(userID));
             ResultSet resultSet = selectStatement.executeQuery();
 
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 encPassword = resultSet.getString("password");
             }
 
@@ -304,6 +305,201 @@ public class User {
 
     public boolean isLocked() {
         return userRepository.isLocked(userID);
+    }
+
+    // Create Account
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+
+//    private static boolean isValidAddress(String street, String city, String state, String country, short postalCode) {
+//        return !(street.isEmpty() || city.isEmpty() || state.isEmpty() || country.isEmpty() || postalCode <= 0);
+//    }
+//
+//    private static Address initializeAddress(Scanner scanner) {
+//        System.out.print("-> Street: ");
+//        String street = scanner.nextLine();
+//        System.out.print("-> City: ");
+//        String city = scanner.nextLine();
+//        System.out.print("-> State: ");
+//        String state = scanner.nextLine();
+//        System.out.print("-> Country: ");
+//        String country = scanner.nextLine();
+//        System.out.print("-> Postal Code: ");
+//        short postalCode = Short.parseShort(scanner.nextLine());
+//
+//        while (!isValidAddress(street, city, state, country, postalCode)) {
+//            System.out.println("Invalid address, please enter again:");
+//            street = scanner.nextLine();
+//            city = scanner.nextLine();
+//            state = scanner.nextLine();
+//            country = scanner.nextLine();
+//            postalCode = Short.parseShort(scanner.nextLine());
+//        }
+//
+//        return new Address(street, city, state, country, postalCode);
+//    }
+
+
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+
+
+
+
+    public boolean userExistsInGeneralDB() {
+        int userCount = 0;
+        try {
+            String selectQuery = "SELECT count(*) FROM user WHERE UserID = ?";
+            PreparedStatement selectStatement = userRepository.getConnection().prepareStatement(selectQuery);
+            selectStatement.setInt(1, userID);
+            ResultSet resultSet = selectStatement.executeQuery();
+            if (resultSet.next()) {
+                userCount = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return userCount == 1;
+    }
+
+    public void insertUser() {
+        if (userExistsInGeneralDB()) {
+            return;
+        }
+        try {
+            String insertQuery = "INSERT INTO user (FirstName, LastName, Email, PhoneNumber, isLocked) VALUES ( ?, ?, ?, ?, ?)";
+            PreparedStatement insertStatement = userRepository.getConnection().prepareStatement(insertQuery);
+            insertStatement.setString(1, getFirstName());
+            insertStatement.setString(2, getLastName());
+            insertStatement.setString(3, getEmail());
+            insertStatement.setString(4, getPhoneNumber());
+            insertStatement.setString(5, "0");
+            insertStatement.executeUpdate();
+            setUserID(getUserIDFromDB(this));
+
+            String insertQueryRole = "INSERT INTO academy.userRole (UserID, UserRoleID) VALUES(?, ?)";
+            PreparedStatement insertStatementRole = userRepository.getConnection().prepareStatement(insertQueryRole);
+            insertStatementRole.setString(1, String.valueOf(getUserID()));
+            insertStatementRole.setString(2, String.valueOf(getUserRole(getRole())));
+            insertStatementRole.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+    }
+
+    public void insertCredentials() throws SQLException {
+        String insertQuery = "INSERT INTO credentials (UserID, Username, Password) VALUES (?, ?, ?)";
+        try (PreparedStatement insertStatement = userRepository.getConnection().prepareStatement(insertQuery)) {
+            insertStatement.setInt(1, getUserIDFromDB(this));
+            insertStatement.setString(2, getFirstName() + getLastName());
+            insertStatement.setString(3, UserRepository.encryptPassword(getPassword()));
+            insertStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+            throw e;
+        }
+    }
+
+    public void insertIntoLibrary(String libraryName) throws SQLException {
+        String insertLibrary = "INSERT INTO library (LibraryName) VALUES (?)";
+        try {
+            PreparedStatement insertStatement = userRepository.getConnection().prepareStatement(insertLibrary);
+            insertStatement.setString(1, libraryName);
+            insertStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+            throw e;
+        }
+
+    }
+
+    public void insertUserLibrary(int userID, int libraryID) throws SQLException {
+        String insertQuery = "INSERT INTO academy.userLibrary (LibraryID, UserID) VALUES (?, ?)";
+        try (PreparedStatement insertStatement = userRepository.getConnection().prepareStatement(insertQuery)) {
+            insertStatement.setInt(1, libraryID);
+            insertStatement.setInt(2, userID);
+            insertStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+            throw e;
+        }
+    }
+
+    public static int getUserIDFromDB(User user) {
+        int ID = 0;
+        try {
+            String selectQuery = "select userID from user u where u.FirstName = ? and u.LastName = ? and u.email = ?";
+            PreparedStatement selectStatement = user.userRepository.getConnection().prepareStatement(selectQuery);
+            selectStatement.setString(1, user.getFirstName());
+            selectStatement.setString(2, user.getLastName());
+            selectStatement.setString(3, user.getEmail());
+
+            ResultSet resultSet = selectStatement.executeQuery();
+            if (resultSet.next()) {
+                ID = resultSet.getInt("userID");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return ID;
+
+    }
+
+    public int getLibraryIDFromDB(String LibraryName) {
+        int ID = 0;
+        try {
+            String selectQuery = "select LibraryID from library l where l.LibraryName = ?";
+            PreparedStatement selectStatement = userRepository.getConnection().prepareStatement(selectQuery);
+            selectStatement.setString(1, LibraryName);
+
+            ResultSet resultSet = selectStatement.executeQuery();
+            if (resultSet.next()) {
+                ID = resultSet.getInt("LibraryID");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+        return ID;
+    }
+
+    private int getUserRole(Role role) {
+        switch (role) {
+            case READER:
+                return 1;
+            case AUTHOR:
+                return 2;
+            case ADMIN:
+                return 3;
+        }
+        return 0;
+    }
+    //трябва да попълня 2.Library (Name) , 1.Credentials (UserID,Username, password - UserRepository.encryptPassword(user.getPassword()), UserLibrary (INSERT INTO academy.userLibrary
+    //(LibraryID, UserID)
+    //VALUES(?, ?,);)
+
+    public void printUserData() {
+        System.out.println("User Information:");
+        System.out.println("First Name: " + firstName);
+        System.out.println("Last Name: " + lastName);
+        System.out.println("Email: " + email);
+        System.out.println("User Name: " + userName);
+        System.out.println("Phone Number: " + phoneNumber);
+        System.out.println("Role: " + role);
     }
 }
 

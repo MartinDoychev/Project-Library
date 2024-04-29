@@ -1,6 +1,8 @@
 package console.menu;
 
+import enums.Role;
 import user.User;
+import user.repository.IUserRepository;
 import user.repository.UserRepository;
 
 import java.sql.SQLException;
@@ -115,6 +117,122 @@ public class Menu {
 
         return User.getUserFromDB(userName, UserRepository.encryptPassword(pass));
     }
+
+    public static User createAccount(Scanner scanner) throws SQLException {
+        User user = new User();
+        System.out.println("Please, insert the following information:");
+        String firstName = initializeName(scanner, "First");
+        String lastName = initializeName(scanner, "Last");
+        System.out.print("-> Email: ");
+        String email = scanner.nextLine();
+        System.out.print("-> Phone Number: ");
+        String phoneNumber = scanner.nextLine();
+        String password = initializePassword(scanner);
+
+        System.out.println("Select the role:");
+        System.out.println("1. Reader");
+        System.out.println("2. Author");
+        System.out.println("3. Admin");
+        System.out.print("Your choice: ");
+        int choice = getChoice(scanner);
+
+        Role role;
+        switch (choice) {
+            case 1:
+                role = Role.READER;
+                break;
+            case 2:
+                role = Role.AUTHOR;
+                break;
+            case 3:
+                role = Role.ADMIN;
+                break;
+            default:
+                System.out.println("Invalid choice. Setting role to Reader.");
+                role = Role.READER;
+                break;
+        }
+
+        IUserRepository userRepository = new UserRepository();
+        user = new User(0, firstName, lastName, email, phoneNumber, password, role, userRepository);
+        int userID = User.getUserIDFromDB(user);
+        if (!user.getUserRepository().userExistsInGeneralDB(userID)) {
+            user.insertUser();
+            user.insertCredentials();
+            user.insertIntoLibrary(user.getFirstName() + user.getLastName());
+            user.insertUserLibrary(User.getUserIDFromDB(user), user.getLibraryIDFromDB(user.getFirstName() + user.getLastName()));
+        }
+        return user;
+    }
+
+    private static int getChoice(Scanner scan) {
+        String choice;
+        do {
+            choice = scan.nextLine();
+            if (choice.matches("\\d")) {
+                break;
+            } else {
+                System.out.println("  Invalid Input!");
+            }
+        } while (!(scan.hasNextInt()) || !choice.matches("\\d"));
+        return Integer.parseInt(choice);
+    }
+
+    private static String initializePassword(Scanner scanner) {
+        System.out.print("-> Password: ");
+        String password = scanner.next();
+        scanner.nextLine();
+        while (!isValidPassword(password)) {
+            System.out.print("Invalid password, please enter again: ");
+            password = scanner.next();
+            scanner.nextLine();
+        }
+        return password;
+    }
+
+    private static boolean isValidPassword(String password) {
+        return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}$");
+    }
+
+    private static String initializeName(Scanner scanner, String str) {
+        System.out.print("-> Enter " + str + " Name: ");
+        String name = scanner.nextLine();
+        while (!isValidName(name)) {
+            System.out.print("Invalid name, please enter again: ");
+            name = scanner.nextLine();
+        }
+        return capitalLetter(name);
+    }
+
+    private static String capitalLetter(String str) {
+        if (str == null || str.isEmpty()) {
+            System.out.println(" ------ error [empty string] ------\n");
+            return str;
+        }
+
+        char firstChar = Character.toUpperCase(str.charAt(0));
+        StringBuilder result = new StringBuilder().append(firstChar);
+        boolean makeNextCapital = false;
+        for (int i = 1; i < str.length(); i++) {
+            char currentChar = str.charAt(i);
+            if (Character.isLetter(currentChar)) {
+                if (makeNextCapital) {
+                    result.append(Character.toUpperCase(currentChar));
+                    makeNextCapital = false;
+                } else {
+                    result.append(Character.toLowerCase(currentChar));
+                }
+            } else if (currentChar == ' ') {
+                makeNextCapital = true;
+            }
+        }
+        return result.toString();
+    }
+
+    private static boolean isValidName(String name) {
+        return name != null && !name.isEmpty() && name.matches("[A-Za-z]+");
+    }
+
 
     private String convertCharArrayToString(char[] pass) {
         return new String(pass);
