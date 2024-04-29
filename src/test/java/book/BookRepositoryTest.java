@@ -84,7 +84,7 @@ public class BookRepositoryTest{
     @Test
     public void testRatingExistsInUserRating() {
         Assert.assertTrue(bookRepository.ratingExistsInUserRating(2, 17));
-        Assert.assertFalse(bookRepository.ratingExistsInUserRating(3, 17));
+        Assert.assertFalse(bookRepository.ratingExistsInUserRating(5, 17));
     }
 
     @Test
@@ -199,13 +199,19 @@ public class BookRepositoryTest{
         Assert.assertFalse(bookRepository.bookExistsInLibrary(7, 1));
     }
 
-//    @Test
-//    public void testGetAverageRatingFromDB() {
-//        Assert.assertEquals(4.23, bookRepository.getAverageRatingFromDB(1), 0.0003f);
-//    }
+    @Test
+    public void testGetAverageRatingFromDB() {
+        Assert.assertEquals(3.8, bookRepository.getAverageRatingFromDB(1), 0.0003f);
+    }
 
-//    @Test
-//    public void testAddRatingToUSerRatingTable() {
-//        bookRepository.addRatingToUserRatingTable(4, 4, 4.44);
-//    }
+    @Test
+    public void testAddRatingToUSerRatingTable() {
+        bookRepository.addRatingToUserRatingTable(7, 6, 3.35);
+    }
+
+    @Test
+    public void testSetRatingInBookTable() {
+        bookRepository.setRatingByBookIDInBookTable(7, 2.89);
+    }
+
 }

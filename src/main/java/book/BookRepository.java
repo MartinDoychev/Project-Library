@@ -421,9 +421,8 @@ public class BookRepository implements IBookRepository {
 
     @Override
     public void rateBook(int bookID, int userID, double rating) throws SQLException {
-        Book book = getBookByID(bookID);
-
-        if (addRatingToUserRatingTable(bookID, userID, rating)) {
+        boolean added = addRatingToUserRatingTable(bookID, userID, rating);
+        if (added) {
             double updatedRating = getAverageRatingFromDB(bookID);
             setRatingByBookIDInBookTable(bookID, updatedRating);
         }
@@ -451,7 +450,7 @@ public class BookRepository implements IBookRepository {
         return countRows > 0;
     }
 
-    private boolean addRatingToUserRatingTable(int bookID, int userID, double rating) {
+    public boolean addRatingToUserRatingTable(int bookID, int userID, double rating) {
         int rowsInserted = 0;
         try {
             String insertQuery = "INSERT INTO academy.UserRating\n" +

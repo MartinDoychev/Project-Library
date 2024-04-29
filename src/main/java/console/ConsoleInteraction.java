@@ -5,6 +5,7 @@ import book.BookRepository;
 import book.IBookRepository;
 import console.menu.Menu;
 import enums.BookAccess;
+import enums.Role;
 import user.User;
 import user.UserAdmin;
 import user.UserAuthor;
@@ -46,6 +47,11 @@ public class ConsoleInteraction {
         User user = logIn(scan, menu);
         IBookRepository bookRepository = new BookRepository();
 
+        if (user.isLocked()) {
+            System.out.println("  Your account is locked!\n  cNieves\nPlease contact Admin!");
+            return;
+        }
+
         switch (user.getRole()) {
             case READER:
                 UserReader reader = new UserReader(user.getUserID(), user.getUserRepository(), bookRepository);
@@ -73,12 +79,22 @@ public class ConsoleInteraction {
                 case 1:
                     System.out.println("  User ID to lock: ");
                     int userIDLock = getUserID(scan);
-                    lockAccount(admin, userIDLock, scan);
+                    if (User.getRoleFromDB(userIDLock) == Role.ADMIN) {
+                        System.out.println("  You are not allowed to temper with\n   another admin!");
+                        break;
+                    } else {
+                        lockAccount(admin, userIDLock, scan);
+                    }
                     break;
                 case 2:
                     System.out.println("  User ID to unlock: ");
                     int userIDUnlock = getUserID(scan);
-                    unlockAccount(admin, userIDUnlock, scan);
+                    if (User.getRoleFromDB(userIDUnlock) == Role.ADMIN) {
+                        System.out.println("  You are not allowed to temper with another admin!");
+                        break;
+                    } else {
+                        unlockAccount(admin, userIDUnlock, scan);
+                    }
                     break;
                 case 3:
                     System.out.println("  User ID to review: ");

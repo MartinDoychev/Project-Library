@@ -159,9 +159,16 @@ public class Menu {
         if (!user.getUserRepository().userExistsInGeneralDB(userID)) {
             user.insertUser();
             user.insertCredentials();
-            user.insertIntoLibrary(user.getFirstName() + user.getLastName());
-            user.insertUserLibrary(User.getUserIDFromDB(user), user.getLibraryIDFromDB(user.getFirstName() + user.getLastName()));
+            user.insertIntoUserRole();
+            if (user.getRole() == Role.AUTHOR || user.getRole() == Role.READER) {
+                user.insertIntoLibrary(user.getFirstName() + user.getLastName());
+                user.insertUserLibrary(User.getUserIDFromDB(user), user.getLibraryIDFromDB(user.getFirstName() + user.getLastName()));
+            }
+            if (user.getRole() == Role.AUTHOR) {
+                user.insertIntoAuthor();
+            }
         }
+        user.setUserID(userID);
         return user;
     }
 

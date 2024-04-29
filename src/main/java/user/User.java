@@ -501,6 +501,38 @@ public class User {
         System.out.println("Phone Number: " + phoneNumber);
         System.out.println("Role: " + role);
     }
+
+    public void insertIntoAuthor() {
+        int userID = getUserIDFromDB(this);
+        try {
+            String insertQuery = "INSERT INTO academy.author\n" +
+                    "(UserID)\n" +
+                    "VALUES(?)";
+            PreparedStatement insertStatement = userRepository.getConnection().prepareStatement(insertQuery);
+            insertStatement.setInt(1, userID);
+            insertStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+    }
+
+    public void insertIntoUserRole() {
+        int userID = getUserIDFromDB(this);
+        int role = getUserRole(this.getRole());
+        try {
+            String insertQuery = "INSERT INTO academy.userRole\n" +
+                    "(UserID, UserRoleID)\n" +
+                    "VALUES(?, ?)";
+            PreparedStatement insertStatement = userRepository.getConnection().prepareStatement(insertQuery);
+            insertStatement.setInt(1, userID);
+            insertStatement.setInt(2, role);
+            insertStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+    }
+
+
 }
 
 

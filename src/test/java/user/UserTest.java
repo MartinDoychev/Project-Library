@@ -83,4 +83,14 @@ public class UserTest {
         user.insertCredentials();
     }
 
+    @Test
+    public void testInsertIntoAuthor() {
+        user.insertIntoAuthor();
+    }
+
+    @Test
+    public void testInsertIntoUserRole() {
+        user.insertIntoUserRole();
+    }
+
 }
