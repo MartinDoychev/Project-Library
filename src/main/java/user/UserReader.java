@@ -57,13 +57,13 @@ public class UserReader extends User implements Reader {
     }
 
     @Override
-    public boolean addToLibrary(String bookName, boolean isRead) {
+    public boolean addToLibrary(String bookName, boolean isRead, int userID) {
         boolean result = false;
         if (bookRepository.bookExistsInGeneralLibrary(bookName)) {
             ArrayList<Book> books = bookRepository.searchBookByName(bookName);
             for (Book book : books) {
                 if (book.getAccess() == BookAccess.AVAILABLE) {
-                    this.library.addBookToLibrary(book.getTitle(), isRead);
+                    this.library.addBookToLibrary(book.getTitle(), isRead, userID);
                     result = true;
                 }
             }

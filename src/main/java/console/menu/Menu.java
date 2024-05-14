@@ -168,6 +168,7 @@ public class Menu {
                 user.insertIntoAuthor();
             }
         }
+        userID = User.getUserIDFromDB(user);
         user.setUserID(userID);
         return user;
     }

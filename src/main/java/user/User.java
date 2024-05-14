@@ -391,11 +391,11 @@ public class User {
             insertStatement.executeUpdate();
             setUserID(getUserIDFromDB(this));
 
-            String insertQueryRole = "INSERT INTO academy.userRole (UserID, UserRoleID) VALUES(?, ?)";
-            PreparedStatement insertStatementRole = userRepository.getConnection().prepareStatement(insertQueryRole);
-            insertStatementRole.setString(1, String.valueOf(getUserID()));
-            insertStatementRole.setString(2, String.valueOf(getUserRole(getRole())));
-            insertStatementRole.executeUpdate();
+//            String insertQueryRole = "INSERT INTO academy.userRole (UserID, UserRoleID) VALUES(?, ?)";
+//            PreparedStatement insertStatementRole = userRepository.getConnection().prepareStatement(insertQueryRole);
+//            insertStatementRole.setString(1, String.valueOf(getUserID()));
+//            insertStatementRole.setString(2, String.valueOf(getUserRole(getRole())));
+//            insertStatementRole.executeUpdate();
 
         } catch (SQLException e) {
             System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());

@@ -48,7 +48,7 @@ public class ConsoleInteraction {
         IBookRepository bookRepository = new BookRepository();
 
         if (user.isLocked()) {
-            System.out.println("  Your account is locked!\n  cNieves\nPlease contact Admin!");
+            System.out.println("  Your account is locked!\nPlease contact Admin!");
             return;
         }
 
@@ -324,7 +324,7 @@ public class ConsoleInteraction {
         boolean isRead = read == 1;
         Book book = new Book(bookID, isRead);
         if (!book.bookExistsInLibrary(reader.getUserRepository().getUserLibraryID(reader.getUserID()))) {
-            boolean bookAdded = reader.addToLibrary(bookName, isRead);
+            boolean bookAdded = reader.addToLibrary(bookName, isRead, reader.getUserID());
             if (bookAdded) {
                 System.out.println("  Book successfully added!");
             } else {

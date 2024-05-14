@@ -52,10 +52,30 @@ public class LibraryRepository implements ILibraryRepository {
     }
 
     @Override
-    public int addToLibrary(Book book, Library library, boolean isRead) {
+    public int getLibraryIDFromDB(int userID) {
+        int libraryID = 0;
+
+        try {
+            String selectQuery = "select LibraryID from userLibrary ul where UserID = ?";
+            PreparedStatement selectStatement = this.connection.prepareStatement(selectQuery);
+            selectStatement.setInt(1, userID);
+            ResultSet resultSet = selectStatement.executeQuery();
+            if (resultSet.next()) {
+                libraryID = resultSet.getInt("LibraryID");
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+        }
+
+        return libraryID;
+    }
+
+
+    @Override
+    public int addToLibrary(Book book, int userID, boolean isRead) {
         int rowsInserted = 0;
         int bookID = book.getBookID();
-        int libraryID = library.getLibraryID();
+        int libraryID = getLibraryIDFromDB(userID); //TODO: change method to getLibraryIDFromDB()
         try {
             if (book.bookExistsInLibrary(libraryID)) {
                 return 0;

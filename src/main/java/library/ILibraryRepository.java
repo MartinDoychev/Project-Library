@@ -7,5 +7,6 @@ public interface ILibraryRepository {
     void sortLibraryByGenre();
     void sortLibraryByName();
     int getAvailableLibraryID();
-    int addToLibrary(Book book, Library library, boolean isRead);
+    int addToLibrary(Book book, int userID, boolean isRead);
+    int getLibraryIDFromDB(int userID);
 }
