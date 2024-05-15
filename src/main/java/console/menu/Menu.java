@@ -31,8 +31,6 @@ public class Menu {
     }
 
 
-
-
 //    public User readCredentials() throws SQLException {
 //        Scanner scan = new Scanner(System.in);
 //        printLogInHeader();
@@ -145,7 +143,14 @@ public class Menu {
                 role = Role.AUTHOR;
                 break;
             case 3:
-                role = Role.ADMIN;
+                System.out.println("Не може да създадете административен акаунт. Искате ли да влезнете в своя админ профил");
+                String entry = scanner.nextLine();
+                if (entry == "Yes") {
+                    role = Role.ADMIN;
+                }else {
+                    System.out.println("Invalid choice. Setting role to Reader.");
+                    role = Role.READER;
+                }
                 break;
             default:
                 System.out.println("Invalid choice. Setting role to Reader.");
@@ -284,7 +289,8 @@ public class Menu {
         System.out.println("| 1. Upload book                        |");
         System.out.println("| 2. Show library                       |");
         System.out.println("| 3. Update book access                 |");
-        System.out.println("| 4. Exit                               |");
+        System.out.println("| 4. Modify book details                |");
+        System.out.println("| 5. Exit                               |");
         System.out.println("|                                       |");
         System.out.println("*****************************************");
         System.out.println("|                                       |");
@@ -350,7 +356,6 @@ public class Menu {
         System.out.println("*****************************************");
         System.out.println("|                                       |");
     }
-
 
 
     public void printAddBookDetailsFooter() {

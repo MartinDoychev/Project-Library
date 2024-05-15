@@ -167,6 +167,9 @@ public class ConsoleInteraction {
                     updateBookAccess(author, scan, menu);
                     break;
                 case 4:
+                   modifyBookDetails(scan);
+                    break;
+                case 5:
                     return;
             }
             menu.printAuthorMenu();
@@ -469,5 +472,40 @@ public class ConsoleInteraction {
             System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
         }
         return authorName;
+    }
+
+    public void modifyBookDetails(Scanner scan) {
+        System.out.println("Enter the ID of the book you wish to modify:");
+        int bookID = scan.nextInt();
+        scan.nextLine();
+        System.out.println("What would you like to modify");
+        System.out.println("1. Title");
+        System.out.println("1. Genre");
+        System.out.println("1. Language");
+        System.out.print("Your choice: ");
+        int choice = scan.nextInt();
+        scan.nextLine();
+        try {
+            BookRepository bookRepository = new BookRepository();
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter new title");
+                    String newTitle = scan.nextLine();
+                    bookRepository.updateBookTitle(bookID, newTitle);
+                    break;
+                case 2:
+                    System.out.println("Enter new genre");
+                    String newGenre = scan.nextLine();
+                    bookRepository.updateBookGenre(bookID, newGenre);
+                    break;
+                case 3:
+                    System.out.println("Enter new language");
+                    String newLanguage = scan.nextLine();
+                    bookRepository.updateBookLanguage(bookID, newLanguage);
+                    break;
+            }
+        } catch (SQLException e) {
+            System.out.printf("Error updating book details: %s%n", e.getMessage());
+        }
     }
 }

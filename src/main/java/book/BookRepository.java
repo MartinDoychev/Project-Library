@@ -146,7 +146,6 @@ public class BookRepository implements IBookRepository {
     }
 
 
-
     public static BookAccess getTheBookAccess(int access) {
         BookAccess bookAccess = BookAccess.AVAILABLE;
         switch (access) {
@@ -311,8 +310,8 @@ public class BookRepository implements IBookRepository {
             ResultSet resultSet = selectStatement.executeQuery();
 
             if (resultSet.next()) {
-               int authorID = resultSet.getInt("AuthorID");
-               authorName = getAuthor(authorID);
+                int authorID = resultSet.getInt("AuthorID");
+                authorName = getAuthor(authorID);
             }
         } catch (SQLException e) {
             System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
@@ -440,7 +439,7 @@ public class BookRepository implements IBookRepository {
             selectStatement.setString(2, String.valueOf(userID));
             ResultSet resultSet = selectStatement.executeQuery();
 
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 countRows = resultSet.getInt("records");
             }
         } catch (SQLException e) {
@@ -475,7 +474,7 @@ public class BookRepository implements IBookRepository {
             selectStatement.setString(1, String.valueOf(bookID));
             ResultSet resultSet = selectStatement.executeQuery();
 
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 rating = resultSet.getDouble("Rating");
             }
         } catch (SQLException e) {
@@ -639,5 +638,45 @@ public class BookRepository implements IBookRepository {
 
         return bookID;
     }
+@Override
+    public void updateBookTitle(int bookID, String newTitle) {
+        try {
+            String updateQuery = "UPDATE book SET Title = ? WHERE BookID=?";
+            PreparedStatement updateStatement = this.connection.prepareStatement(updateQuery);
+            updateStatement.setString(1, newTitle);
+            updateStatement.setInt(2, bookID);
+            updateStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
 
+        }
+    }
+@Override
+    public void updateBookGenre(int bookID, String newGenre) {
+        try {
+            int genreID = getGenreID(newGenre);
+            String updateQuery = "UPDATE book SET GenreID = ? WHERE BookID=?";
+            PreparedStatement updateStatement = this.connection.prepareStatement(updateQuery);
+            updateStatement.setInt(1, genreID);
+            updateStatement.setInt(2, bookID);
+            updateStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+
+        }
+    }
+@Override
+    public void updateBookLanguage(int bookID, String newLanguage) {
+        try {
+            int languageId = getLanguageID(newLanguage);
+            String updateQuery = "UPDATE book SET LanguageID = ? WHERE BookID=?";
+            PreparedStatement updateStatement = this.connection.prepareStatement(updateQuery);
+            updateStatement.setInt(1, languageId);
+            updateStatement.setInt(2, bookID);
+            updateStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
+
+        }
+    }
 }

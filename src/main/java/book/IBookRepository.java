@@ -57,4 +57,10 @@ public interface IBookRepository {
 
     boolean ratingExistsInUserRating(int bookID, int userID);
     int getBookIDbyName(String bookName);
+
+    void updateBookTitle(int bookID, String newTitle);
+
+    void updateBookGenre(int bookID, String newGenre);
+
+    void updateBookLanguage(int bookID, String newLanguage);
 }
