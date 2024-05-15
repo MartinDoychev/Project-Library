@@ -480,8 +480,8 @@ public class ConsoleInteraction {
         scan.nextLine();
         System.out.println("What would you like to modify");
         System.out.println("1. Title");
-        System.out.println("1. Genre");
-        System.out.println("1. Language");
+        System.out.println("2. Genre");
+        System.out.println("3. Language");
         System.out.print("Your choice: ");
         int choice = scan.nextInt();
         scan.nextLine();

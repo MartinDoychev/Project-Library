@@ -130,7 +130,6 @@ public class Menu {
         System.out.println("Select the role:");
         System.out.println("1. Reader");
         System.out.println("2. Author");
-        System.out.println("3. Admin");
         System.out.print("Your choice: ");
         int choice = getChoice(scanner);
 
@@ -141,16 +140,6 @@ public class Menu {
                 break;
             case 2:
                 role = Role.AUTHOR;
-                break;
-            case 3:
-                System.out.println("Не може да създадете административен акаунт. Искате ли да влезнете в своя админ профил");
-                String entry = scanner.nextLine();
-                if (entry == "Yes") {
-                    role = Role.ADMIN;
-                }else {
-                    System.out.println("Invalid choice. Setting role to Reader.");
-                    role = Role.READER;
-                }
                 break;
             default:
                 System.out.println("Invalid choice. Setting role to Reader.");
