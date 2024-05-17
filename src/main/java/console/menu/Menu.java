@@ -270,7 +270,8 @@ public class Menu {
         System.out.println("| 3. Show last read                     |");
         System.out.println("| 4. Sort library                       |");
         System.out.println("| 5. Rate book                          |");
-        System.out.println("| 6. Exit                               |");
+        System.out.println("| 6. Show available books in library    |");
+        System.out.println("| 7. Exit                               |");
         System.out.println("|                                       |");
         System.out.println("*****************************************");
         System.out.println("|                                       |");

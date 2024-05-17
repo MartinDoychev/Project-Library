@@ -4,6 +4,7 @@ import book.Book;
 import book.BookRepository;
 import book.IBookRepository;
 import console.menu.Menu;
+import dbConnection.DBConnectionManager;
 import enums.BookAccess;
 import enums.Role;
 import user.User;
@@ -11,7 +12,10 @@ import user.UserAdmin;
 import user.UserAuthor;
 import user.UserReader;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -306,6 +310,8 @@ public class ConsoleInteraction {
                     System.out.println("Rating added!");
                     break;
                 case 6:
+                    ReaderShowAvailableBooks();
+                case 7:
                     return;
             }
             menu.printReaderMenu();
@@ -469,5 +475,27 @@ public class ConsoleInteraction {
             System.out.printf("Error message: %s, cause: %s%n", e.getMessage(), e.getCause());
         }
         return authorName;
+    }
+
+    public void ReaderShowAvailableBooks(){
+        System.out.println("These are the available books in the library:");
+        String selectQuery2 = "SELECT * FROM book WHERE AccessID = " + 1 ;
+        try {
+            DBConnectionManager instance = DBConnectionManager.getInstance();
+            Connection connection = instance.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(selectQuery2);
+            while (resultSet.next()) {
+                System.out.print("ID: " + resultSet.getInt("BookID"));
+                System.out.print(", Title: " + resultSet.getString("BookTitle"));
+                System.out.print(", Genre: " + resultSet.getString("Genre"));
+                System.out.print(", Pages: " + resultSet.getInt("Pages"));
+                System.out.print(", Rating: " + resultSet.getInt("Rating"));
+                System.out.println(", AuthorID: " + resultSet.getInt("AuthorID"));
+            }
+            instance.closeConnection();
+        } catch (SQLException e) {
+            System.err.println("Грешка при вмъкване на потребител по име на автор: " + e.getMessage());
+        }
     }
 }
